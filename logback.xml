@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <appender name="LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	    <file>./logs/service.log</file>
+	    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+	        <Pattern>
+	            [%d{ISO8601}] %-5level %-40.40c{1.} : %m%ex%n
+	        </Pattern>
+	    </encoder>
+	    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+	        <fileNamePattern>./logs/service_%d{MM-dd-yyyy}_%i.log.gz</fileNamePattern>
+	        <maxFileSize>1MB</maxFileSize>
+	        <maxHistory>10</maxHistory>
+	        <totalSizeCap>1GB</totalSizeCap>
+	    </rollingPolicy>
+	</appender>
+    <root level="debug">
+        <appender-ref ref="LOG_FILE" />
+    </root>
+    <logger name="org.springframework" level="error">
+		<appender-ref ref="LOG_FILE" />
+	</logger>
+    <logger name="com.step" level="debug">
+		<appender-ref ref="LOG_FILE" />
+	</logger>
+</configuration>

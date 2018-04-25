@@ -1,0 +1,10 @@
+server:
+  port: 8080
+
+logging:
+  config: logback.xml
+
+service:
+  name: stepxml-converter
+  stepxml:
+    path: /Users/igce/Desktop
