@@ -10,7 +10,7 @@ public class Application {
 
     public static void main( String args[] ) {
 
-        new SpringApplicationBuilder( Application.class ).properties( "spring.config.name:application" ).build().run( args );
+        new SpringApplicationBuilder( Application.class ).properties( "spring.config.name:application,messages" ).build().run( args );
 
     }
 

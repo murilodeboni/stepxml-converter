@@ -1,0 +1,3 @@
+log:
+  error:
+    stepxmlReader: There was an error reading STEP Xml

@@ -2,9 +2,20 @@ server:
   port: 8080
 
 logging:
-  config: logback.xml
+  file: ./logs/service.log
+  level:
+    root: info
+    br.com.step: debug
+  pattern: "[%d{ISO8601}] %-5level %-40c{1.} : %m%ex%n"
+
 
 service:
   name: stepxml-converter
+  version: 0.0.1
+
   stepxml:
-    path: /Users/igce/Desktop
+    path: /Users/igce/Desenvolvimento
+    extension: .xml
+
+  activemq:
+    queue: queue_name
