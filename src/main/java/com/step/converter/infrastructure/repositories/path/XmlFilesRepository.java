@@ -15,7 +15,7 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class XmlFiles implements FilenameFilter {
+public class XmlFilesRepository implements FilenameFilter {
 
 	private String extension;
 
@@ -27,7 +27,7 @@ public class XmlFiles implements FilenameFilter {
 	@Value( "${log.error.stepxmlReader}" )
 	private String stepxmlReaderError;
 
-	public XmlFiles() {
+	public XmlFilesRepository() {
 
 		extension = fileExtension;
 	}
@@ -47,7 +47,7 @@ public class XmlFiles implements FilenameFilter {
 
 			File file = new File( stepXmlPath );
 
-			FilenameFilter filter = new XmlFiles();
+			FilenameFilter filter = new XmlFilesRepository();
 
 			String[] files = file.list( filter );
 

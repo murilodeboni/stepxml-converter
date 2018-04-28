@@ -18,29 +18,29 @@ import java.util.ArrayList;
 @EnableSwagger2
 public class SwaggerConfig {
 
-    @Value( "${service.version}" )
-    private String VERSION;
+	@Value( "${service.version}" )
+	private String VERSION;
 
-    @Bean
-    public Docket productApi( ) {
+	@Bean
+	public Docket productApi() {
 
-        return new Docket( DocumentationType.SWAGGER_2 )
-                .select()
-                .apis( RequestHandlerSelectors.any( ) )
-                .paths( Predicates.not( PathSelectors.regex("/error.*" ) ) )
-                .build()
-                .apiInfo( metaData() );
-    }
+		return new Docket( DocumentationType.SWAGGER_2 )
+				.select()
+				.apis( RequestHandlerSelectors.any() )
+				.paths( Predicates.not( PathSelectors.regex( "/error.*" ) ) )
+				.build()
+				.apiInfo( metaData() );
+	}
 
-    private ApiInfo metaData() {
+	private ApiInfo metaData() {
 
-        return new ApiInfo( "STEPml Converter"
-                , "STEPXml Converter"
-                , VERSION
-                ,""
-                ,new Contact( "OpenSource", "", null )
-                ,""
-                ,""
-                , new ArrayList<>() );
-    }
+		return new ApiInfo( "STEPml Converter"
+				, "STEPXml Converter"
+				, VERSION
+				, ""
+				, new Contact( "OpenSource", "", null )
+				, ""
+				, ""
+				, new ArrayList<>() );
+	}
 }
