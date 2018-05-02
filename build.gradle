@@ -66,3 +66,18 @@ dependencies {
 task wrapper(type: Wrapper) {
     gradleVersion = '3.4.1'
 }
+
+task prepareDocker(type: Copy, dependsOn: build) {
+    from jar
+    from('Dockerfile')
+    from('.') {
+        include('application.ctmpl')
+        include('application.yml')
+        include('messages.ctmpl')
+        include('messages.yml')
+        include 'consul/**'
+        include 'consul-template/**'
+        include 'export_consul.sh'
+    }
+    into('build/docker/')
+}

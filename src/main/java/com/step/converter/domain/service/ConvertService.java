@@ -1,5 +1,6 @@
 package com.step.converter.domain.service;
 
+import com.step.converter.infrastructure.exception.StepConverterException;
 import com.step.converter.infrastructure.repositories.path.XmlFilesRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
@@ -18,7 +19,7 @@ public class ConvertService {
 	@Autowired
 	private XmlFilesRepository xmlFilesRepository;
 
-	public JSONObject convertXmlToJson() throws Exception {
+	public JSONObject convertXmlToJson() throws StepConverterException {
 
 		JSONObject jsonObj;
 		StringBuffer json;
@@ -34,7 +35,7 @@ public class ConvertService {
 				String attributeValue;
 				int productCount = 0;
 				int attributesCount = 0;
-				int countClassification = 0;
+				int valueClassificationCount = 0;
 
 				for ( Document doc : documents ) {
 
@@ -153,9 +154,9 @@ public class ConvertService {
 
 												if ( valuesNode.getNodeName().trim().equalsIgnoreCase( "ClassificationReference" ) ) {
 
-													countClassification++;
+													valueClassificationCount++;
 
-													if ( countClassification == 1 ) {
+													if ( valueClassificationCount == 1 ) {
 
 														json.append( ", \"" )
 																.append( valuesNode.getNodeName() )
@@ -191,7 +192,7 @@ public class ConvertService {
 												}
 											}
 
-											countClassification = 0;
+											valueClassificationCount = 0;
 										}
 
 										NodeList valueNodeList = stepProductElement.getElementsByTagName( "Value" );
@@ -290,7 +291,7 @@ public class ConvertService {
 
 		} catch ( Exception e ) {
 
-			throw new Exception( e );
+			throw new StepConverterException( e );
 		}
 
 		return jsonObj;

@@ -1,10 +1,15 @@
+management:
+  health:
+    diskspace.enabled: false
+
 server:
-  port: 8080
+  port: 9090
 
 logging:
   file: ./logs/service.log
   level:
     root: info
+    org.springframework: error
     br.com.step: debug
   pattern: "[%d{ISO8601}] %-5level %-40c{1.} : %m%ex%n"
 
@@ -16,6 +21,3 @@ service:
   stepxml:
     path: /Users/igce/Desenvolvimento
     extension: .xml
-
-  activemq:
-    queue: queue_name

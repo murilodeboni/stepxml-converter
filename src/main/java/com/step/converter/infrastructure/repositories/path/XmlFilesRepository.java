@@ -1,5 +1,7 @@
 package com.step.converter.infrastructure.repositories.path;
 
+import com.step.converter.domain.dto.ErrorResponse;
+import com.step.converter.infrastructure.exception.StepConverterException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -32,7 +34,7 @@ public class XmlFilesRepository implements FilenameFilter {
 		extension = fileExtension;
 	}
 
-	public List<Document> getXmlFiles() throws Exception {
+	public List<Document> getXmlFiles() throws StepConverterException {
 
 		List<Document> documents = new ArrayList<>();
 
@@ -72,11 +74,13 @@ public class XmlFilesRepository implements FilenameFilter {
 					}
 				}
 			}
-		} catch ( ParserConfigurationException parserException ) {
+		} catch ( Exception parserException ) {
 
-			log.error( stepxmlReaderError + parserException.getMessage() );
+			ErrorResponse error = new ErrorResponse("SC-1001", stepxmlReaderError, parserException.getMessage() );
 
-			throw new Exception( parserException );
+			log.error( error.toString() );
+
+			throw new StepConverterException( parserException, error );
 		}
 
 		return documents;

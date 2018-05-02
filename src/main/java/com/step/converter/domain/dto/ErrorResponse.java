@@ -1,13 +1,15 @@
 package com.step.converter.domain.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
 
 @Data
 @ToString
+@AllArgsConstructor
 public class ErrorResponse {
 
-	private Long code;
+	private String code;
 
 	private String message;
 

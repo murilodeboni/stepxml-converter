@@ -1,0 +1,3 @@
+log:
+  error:
+    stepxmlReader: {{ printf "%s/log/error/stepxmlReader" (env "APPLICATION_NAME") | key }}

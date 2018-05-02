@@ -1,0 +1,23 @@
+management:
+  health:
+    diskspace.enabled: {{ printf "%s/management/health/diskspace.enabled" (env "APPLICATION_NAME") | key }}
+
+server:
+  port: {{ printf "%s/server/port" (env "APPLICATION_NAME") | key }}
+
+logging:
+  file: {{ printf "%s/logging/file" (env "APPLICATION_NAME") | key }}
+  level:
+    root: {{ printf "%s/level/root" (env "APPLICATION_NAME") | key }}
+    org.springframework: {{ printf "%s/level/org.springframework" (env "APPLICATION_NAME") | key }}
+    br.com.step: {{ printf "%s/level/br.com.step" (env "APPLICATION_NAME") | key }}
+  pattern: {{ printf "%s/logging/pattern" (env "APPLICATION_NAME") | key }}
+
+
+service:
+  name: {{ printf "%s/service/name" (env "APPLICATION_NAME") | key }}
+  version: {{ printf "%s/service/version" (env "APPLICATION_NAME") | key }}
+
+  stepxml:
+    path: {{ printf "%s/service/stepxml/path" (env "APPLICATION_NAME") | key }}
+    extension: {{ printf "%s/service/stepxml/extension" (env "APPLICATION_NAME") | key }}

@@ -2,6 +2,7 @@ package com.step.converter.application.controller;
 
 import com.step.converter.domain.dto.ErrorResponse;
 import com.step.converter.domain.service.ConvertService;
+import com.step.converter.infrastructure.exception.StepConverterException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +31,7 @@ public class ConverterController {
 	@RequestMapping( value = "/v1/converter/stepxml", method = GET, produces = "application/json" )
 	@ResponseBody
 	@ApiOperation( value = "Return the STEPXml converted in JSON", response = List.class )
-	public ResponseEntity stepxml() {
+	public ResponseEntity convertToJson() {
 
 		try {
 
@@ -38,16 +39,16 @@ public class ConverterController {
 
 			return ok( json.toString() );
 
-		} catch ( Exception e ) {
+		} catch ( StepConverterException e ) {
 
-			log.error( "", e );
+			if ( e.getErrorResponse() != null ) {
 
-			ErrorResponse error = new ErrorResponse();
+				ErrorResponse error = e.getErrorResponse();
 
-			error.setCode( 0L );
-			error.setMessage( e.getMessage() );
+				return status( INTERNAL_SERVER_ERROR ).body( error );
+			}
 
-			return status( INTERNAL_SERVER_ERROR ).body( error );
+			return status( INTERNAL_SERVER_ERROR ).body( null );
 		}
 	}
 }
