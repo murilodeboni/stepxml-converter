@@ -19,5 +19,5 @@ service:
   version: 0.0.1
 
   stepxml:
-    path: /Users/igce/Desenvolvimento
+    path: /Users/Files
     extension: .xml

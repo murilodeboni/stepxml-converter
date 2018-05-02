@@ -1,6 +1,6 @@
 # STEPXML Converter
 
-###### *** *This repository is not maintained by [Stibo Systems](http://www.stibosystems.com)* ***
+###### *** *This code and repository is not maintained by [Stibo Systems](http://www.stibosystems.com)* ***
 
 This is a project to facilitate integration between STEP and downstream systems, this project does the conversion of STEP XML file into JSON using REST calls.
 
@@ -72,8 +72,16 @@ Assets All
     "STEP": [
         {
             "STEP-ProductInformation": {
+                "ExportContext": "Context1",
+                "ContextID": "Context1",
+                "ExportTime": "2018-04-26 14:19:10",
+                "WorkspaceID": "Main",
+                "UseContextLocale": "false",
                 "Products": [
                     {
+                        "ID": "SU3-SalesItem-1111",
+                        "Name": "AC-YU500A",
+                        "UserTypeID": "SalesItem",
                         "ParentID": "SU3-Level3-111",
                         "ManufacturerGLN": {
                             "Derived": "true",
@@ -97,8 +105,6 @@ Assets All
                             "UnitID": "unece.unit.CMT",
                             "Value": "17"
                         },
-                        "Name": "AC-YU500A",
-                        "UserTypeID": "SalesItem",
                         "SellPackDepth": {
                             "UnitID": "unece.unit.CMT",
                             "Value": "6"
@@ -107,7 +113,6 @@ Assets All
                             "UnitID": "unece.unit.CMT",
                             "Value": "4.6"
                         },
-                        "ID": "SU3-SalesItem-1111",
                         "Width": {
                             "UnitID": "unece.unit.CMT",
                             "Value": "14.7"
@@ -158,12 +163,7 @@ Assets All
                             "Value": "2018-04-01"
                         }
                     }
-                ],
-                "ExportContext": "Context1",
-                "ContextID": "Context1",
-                "ExportTime": "2018-04-26 14:19:10",
-                "WorkspaceID": "Main",
-                "UseContextLocale": "false"
+                ]
             }
         }
     ]

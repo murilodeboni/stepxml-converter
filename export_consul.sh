@@ -24,7 +24,7 @@ consul kv put $APPLICATION_NAME/server/port "9090"
 
 consul kv put $APPLICATION_NAME/service/name "stepxml-converter"
 consul kv put $APPLICATION_NAME/service/version "0.0.1"
-consul kv put $APPLICATION_NAME/service/stepxml/path "/Users/igce/Desenvolvimento"
+consul kv put $APPLICATION_NAME/service/stepxml/path "/Users/Files"
 consul kv put $APPLICATION_NAME/service/stepxml/extension ".xml"
 
 consul kv put $APPLICATION_NAME/log/error/stepxmlReader "There was an error reading STEP Xml"
