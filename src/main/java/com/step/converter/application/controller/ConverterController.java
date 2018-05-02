@@ -35,7 +35,7 @@ public class ConverterController {
 
 		try {
 
-			JSONObject json = convertService.convertXmlToJson();
+			JSONObject json = convertService.convertStepXmlFile();
 
 			return ok( json.toString() );
 

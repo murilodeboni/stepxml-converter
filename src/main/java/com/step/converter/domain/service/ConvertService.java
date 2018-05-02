@@ -19,7 +19,14 @@ public class ConvertService {
 	@Autowired
 	private XmlFilesRepository xmlFilesRepository;
 
-	public JSONObject convertXmlToJson() throws StepConverterException {
+	public JSONObject convertStepXmlFile() throws StepConverterException {
+
+		List<Document> documents = xmlFilesRepository.getXmlFiles();
+
+		return this.convertXmlToJson( documents );
+	}
+
+	public JSONObject convertXmlToJson( List<Document> documents ) throws StepConverterException {
 
 		JSONObject jsonObj;
 		StringBuffer json;
@@ -28,259 +35,259 @@ public class ConvertService {
 
 		try {
 
-			List<Document> documents = xmlFilesRepository.getXmlFiles();
+			if ( documents == null || documents.isEmpty() ) {
 
-			if ( documents != null && !documents.isEmpty() ) {
+				allJson.append( "{ \"STEP\" : [] }" );
+			}
 
-				String attributeValue;
-				int productCount = 0;
-				int attributesCount = 0;
-				int valueClassificationCount = 0;
+			String attributeValue;
+			int productCount = 0;
+			int attributesCount = 0;
+			int valueClassificationCount = 0;
 
-				for ( Document doc : documents ) {
+			for ( Document doc : documents ) {
 
-					if ( allJson.length() > 0 ) {
+				if ( allJson.length() > 0 ) {
 
-						allJson.append( ", " );
+					allJson.append( ", " );
 
-					} else {
+				} else {
 
-						allJson.append( "{ \"STEP\" : [ " );
-					}
+					allJson.append( "{ \"STEP\" : [ " );
+				}
 
-					json = new StringBuffer();
+				json = new StringBuffer();
 
-					Element stepProductElement = doc.getDocumentElement();
+				Element stepProductElement = doc.getDocumentElement();
 
-					json.append( "{ " )
-							.append( "\"" )
-							.append( stepProductElement.getNodeName() )
-							.append( "\" : { " );
+				json.append( "{ " )
+						.append( "\"" )
+						.append( stepProductElement.getNodeName() )
+						.append( "\" : { " );
 
-					NamedNodeMap stepProductAttributesNodeMap = stepProductElement.getAttributes();
+				NamedNodeMap stepProductAttributesNodeMap = stepProductElement.getAttributes();
 
-					if ( stepProductAttributesNodeMap != null && stepProductAttributesNodeMap.getLength() > 0 ) {
+				if ( stepProductAttributesNodeMap != null && stepProductAttributesNodeMap.getLength() > 0 ) {
 
-						for ( int i = 0; i < stepProductAttributesNodeMap.getLength(); i++ ) {
+					for ( int i = 0; i < stepProductAttributesNodeMap.getLength(); i++ ) {
 
-							if ( i > 0 ) {
+						if ( i > 0 ) {
 
-								json.append( ", " );
-							}
-
-							Node stepProductAttributesNode = stepProductAttributesNodeMap.item( i );
-
-							json.append( "\"" )
-									.append( stepProductAttributesNode.getNodeName() )
-									.append( "\" : \"" )
-									.append( stepProductAttributesNode.getNodeValue() )
-									.append( "\"" );
+							json.append( ", " );
 						}
 
-						NodeList productsNodeList = stepProductElement.getElementsByTagName( "Products" );
+						Node stepProductAttributesNode = stepProductAttributesNodeMap.item( i );
 
-						if ( productsNodeList != null && productsNodeList.getLength() > 0 ) {
+						json.append( "\"" )
+								.append( stepProductAttributesNode.getNodeName() )
+								.append( "\" : \"" )
+								.append( stepProductAttributesNode.getNodeValue() )
+								.append( "\"" );
+					}
 
-							for ( int i = 0; i < productsNodeList.getLength(); i++ ) {
+					NodeList productsNodeList = stepProductElement.getElementsByTagName( "Products" );
 
-								Node productsNode = productsNodeList.item( i );
+					if ( productsNodeList != null && productsNodeList.getLength() > 0 ) {
 
-								json.append( ", \"" )
-										.append( productsNode.getNodeName() )
-										.append( "\" : [ " );
+						for ( int i = 0; i < productsNodeList.getLength(); i++ ) {
 
-								NodeList productNodeList = productsNode.getChildNodes();
+							Node productsNode = productsNodeList.item( i );
 
-								if ( productNodeList != null && productNodeList.getLength() > 0 ) {
+							json.append( ", \"" )
+									.append( productsNode.getNodeName() )
+									.append( "\" : [ " );
 
-									for ( int j = 0; j < productNodeList.getLength(); j++ ) {
+							NodeList productNodeList = productsNode.getChildNodes();
 
-										Node productNode = productNodeList.item( j );
+							if ( productNodeList != null && productNodeList.getLength() > 0 ) {
 
-										if ( productNode.getNodeName().trim().equalsIgnoreCase( "#text" ) ) {
+								for ( int j = 0; j < productNodeList.getLength(); j++ ) {
 
-											continue;
+									Node productNode = productNodeList.item( j );
+
+									if ( productNode.getNodeName().trim().equalsIgnoreCase( "#text" ) ) {
+
+										continue;
+									}
+
+									if ( productCount > 0 ) {
+
+										json.append( ", " );
+									}
+
+									NamedNodeMap attributesNodeMap = productNode.getAttributes();
+
+									json.append( "{ " );
+
+									if ( attributesNodeMap != null && attributesNodeMap.getLength() > 0 ) {
+
+										for ( int attCount = 0; attCount < attributesNodeMap.getLength(); attCount++ ) {
+
+											if( attCount > 0 ) {
+
+												json.append( ", " );
+											}
+
+											Node attributeNode = attributesNodeMap.item( attCount );
+
+											json.append( "\"" )
+													.append( attributeNode.getNodeName() )
+													.append( "\" : \"" )
+													.append( attributeNode.getNodeValue() )
+													.append( "\"" );
+										}
+									}
+
+									NodeList valuesNodeList = productNode.getChildNodes();
+
+									if ( valuesNodeList != null && valuesNodeList.getLength() > 0 ) {
+
+										for ( int valuesCount = 0; valuesCount < valuesNodeList.getLength(); valuesCount++ ) {
+
+											Node valuesNode = valuesNodeList.item( valuesCount );
+
+											if ( valuesNode.getNodeName().trim().equalsIgnoreCase( "#text" ) ) {
+
+												continue;
+											}
+
+											if ( valuesNode.getNodeName().trim().equalsIgnoreCase( "Name" ) ) {
+
+												json.append( ", \"" )
+													.append( valuesNode.getNodeName() )
+													.append( "\" : \"" )
+													.append( valuesNode.getFirstChild().getNodeValue() )
+													.append( "\" " );
+											}
+
+											if ( valuesNode.getNodeName().trim().equalsIgnoreCase( "ClassificationReference" ) ) {
+
+												valueClassificationCount++;
+
+												if ( valueClassificationCount == 1 ) {
+
+													json.append( ", \"" )
+															.append( valuesNode.getNodeName() )
+															.append( "\" : [ {" );
+
+												} else {
+
+													json.append( ", { " );
+												}
+
+												NamedNodeMap classificationReferenceNodeMap = valuesNode.getAttributes();
+
+												if ( classificationReferenceNodeMap != null && classificationReferenceNodeMap.getLength() > 0 ) {
+
+													for ( int classificationCount = 0; classificationCount < classificationReferenceNodeMap.getLength(); classificationCount++ ) {
+
+														if ( classificationCount > 0 ) {
+
+															json.append( ", " );
+														}
+
+														Node classificationReferenceNode = classificationReferenceNodeMap.item( classificationCount );
+
+														json.append( "\"" )
+																.append( classificationReferenceNode.getNodeName() )
+																.append( "\" : \"" )
+																.append( classificationReferenceNode.getNodeValue() )
+																.append( "\"" );
+													}
+												}
+
+												json.append( "} ] " );
+											}
 										}
 
-										if ( productCount > 0 ) {
+										valueClassificationCount = 0;
+									}
 
-											json.append( ", " );
-										}
+									NodeList valueNodeList = stepProductElement.getElementsByTagName( "Value" );
 
-										NamedNodeMap attributesNodeMap = productNode.getAttributes();
+									if ( valueNodeList != null && valueNodeList.getLength() > 0 ) {
 
-										json.append( "{ " );
+										for( int valueCount = 0; valueCount < valueNodeList.getLength(); valueCount++ ) {
 
-										if ( attributesNodeMap != null && attributesNodeMap.getLength() > 0 ) {
+											Node valueNode = valueNodeList.item( valueCount );
 
-											for ( int attCount = 0; attCount < attributesNodeMap.getLength(); attCount++ ) {
+											NamedNodeMap valueNamedNode = valueNode.getAttributes();
 
-												if( attCount > 0 ) {
+											if ( valueNamedNode != null && valueNamedNode.getLength() > 0 ) {
+
+												json.append( ", \"" )
+														.append( valueNamedNode.getNamedItem( "AttributeID" ).getNodeValue() )
+														.append( "\" : { " );
+
+												for ( int valueNamedCount = 0; valueNamedCount < valueNamedNode.getLength(); valueNamedCount++ ) {
+
+													Node valueAttribute = valueNamedNode.item( valueNamedCount );
+
+													if ( valueAttribute.getNodeName().trim().equalsIgnoreCase( "#text" ) ) {
+
+														continue;
+													}
+
+													if ( !valueAttribute.getNodeName().trim().equalsIgnoreCase( "AttributeID" ) ) {
+
+														attributesCount++;
+
+														if ( attributesCount > 1 ) {
+
+															json.append( ", " );
+														}
+
+														json.append( "\"" )
+																.append( valueAttribute.getNodeName() )
+																.append( "\" : \"" )
+																.append( valueAttribute.getNodeValue() )
+																.append( "\"" );
+													}
+												}
+
+												if ( attributesCount > 0 ) {
 
 													json.append( ", " );
 												}
 
-												Node attributeNode = attributesNodeMap.item( attCount );
+												attributeValue = valueNode.getFirstChild().getNodeValue();
 
-												json.append( "\"" )
-														.append( attributeNode.getNodeName() )
-														.append( "\" : \"" )
-														.append( attributeNode.getNodeValue() )
-														.append( "\"" );
+												json.append( "\"Value\" : " );
+
+												if ( attributeValue != null && ! attributeValue.trim().isEmpty() ) {
+
+													attributeValue = attributeValue.replaceAll( "\\n", "" );
+													attributeValue = unescapeHtml( attributeValue );
+													attributeValue = unescapeXml( attributeValue );
+
+													json.append( "\"" )
+															.append( attributeValue )
+															.append( "\"" );
+												}
+
+												json.append( " } " );
+
+												attributesCount = 0;
 											}
 										}
-
-										NodeList valuesNodeList = productNode.getChildNodes();
-
-										if ( valuesNodeList != null && valuesNodeList.getLength() > 0 ) {
-
-											for ( int valuesCount = 0; valuesCount < valuesNodeList.getLength(); valuesCount++ ) {
-
-												Node valuesNode = valuesNodeList.item( valuesCount );
-
-												if ( valuesNode.getNodeName().trim().equalsIgnoreCase( "#text" ) ) {
-
-													continue;
-												}
-
-												if ( valuesNode.getNodeName().trim().equalsIgnoreCase( "Name" ) ) {
-
-													json.append( ", \"" )
-														.append( valuesNode.getNodeName() )
-														.append( "\" : \"" )
-														.append( valuesNode.getFirstChild().getNodeValue() )
-														.append( "\" " );
-												}
-
-												if ( valuesNode.getNodeName().trim().equalsIgnoreCase( "ClassificationReference" ) ) {
-
-													valueClassificationCount++;
-
-													if ( valueClassificationCount == 1 ) {
-
-														json.append( ", \"" )
-																.append( valuesNode.getNodeName() )
-																.append( "\" : [ {" );
-
-													} else {
-
-														json.append( ", { " );
-													}
-
-													NamedNodeMap classificationReferenceNodeMap = valuesNode.getAttributes();
-
-													if ( classificationReferenceNodeMap != null && classificationReferenceNodeMap.getLength() > 0 ) {
-
-														for ( int classificationCount = 0; classificationCount < classificationReferenceNodeMap.getLength(); classificationCount++ ) {
-
-															if ( classificationCount > 0 ) {
-
-																json.append( ", " );
-															}
-
-															Node classificationReferenceNode = classificationReferenceNodeMap.item( classificationCount );
-
-															json.append( "\"" )
-																	.append( classificationReferenceNode.getNodeName() )
-																	.append( "\" : \"" )
-																	.append( classificationReferenceNode.getNodeValue() )
-																	.append( "\"" );
-														}
-													}
-
-													json.append( "} ] " );
-												}
-											}
-
-											valueClassificationCount = 0;
-										}
-
-										NodeList valueNodeList = stepProductElement.getElementsByTagName( "Value" );
-
-										if ( valueNodeList != null && valueNodeList.getLength() > 0 ) {
-
-											for( int valueCount = 0; valueCount < valueNodeList.getLength(); valueCount++ ) {
-
-												Node valueNode = valueNodeList.item( valueCount );
-
-												NamedNodeMap valueNamedNode = valueNode.getAttributes();
-
-												if ( valueNamedNode != null && valueNamedNode.getLength() > 0 ) {
-
-													json.append( ", \"" )
-															.append( valueNamedNode.getNamedItem( "AttributeID" ).getNodeValue() )
-															.append( "\" : { " );
-
-													for ( int valueNamedCount = 0; valueNamedCount < valueNamedNode.getLength(); valueNamedCount++ ) {
-
-														Node valueAttribute = valueNamedNode.item( valueNamedCount );
-
-														if ( valueAttribute.getNodeName().trim().equalsIgnoreCase( "#text" ) ) {
-
-															continue;
-														}
-
-														if ( !valueAttribute.getNodeName().trim().equalsIgnoreCase( "AttributeID" ) ) {
-
-															attributesCount++;
-
-															if ( attributesCount > 1 ) {
-
-																json.append( ", " );
-															}
-
-															json.append( "\"" )
-																	.append( valueAttribute.getNodeName() )
-																	.append( "\" : \"" )
-																	.append( valueAttribute.getNodeValue() )
-																	.append( "\"" );
-														}
-													}
-
-													if ( attributesCount > 0 ) {
-
-														json.append( ", " );
-													}
-
-													attributeValue = valueNode.getFirstChild().getNodeValue();
-
-													json.append( "\"Value\" : " );
-
-													if ( attributeValue != null && ! attributeValue.trim().isEmpty() ) {
-
-														attributeValue = attributeValue.replaceAll( "\\n", "" );
-														attributeValue = unescapeHtml( attributeValue );
-														attributeValue = unescapeXml( attributeValue );
-
-														json.append( "\"" )
-																.append( attributeValue )
-																.append( "\"" );
-													}
-
-													json.append( " } " );
-
-													attributesCount = 0;
-												}
-											}
-										}
-
-										json.append( " } " );
-
-										productCount++;
 									}
 
-									productCount = 0;
+									json.append( " } " );
+
+									productCount++;
 								}
 
-								json.append( " ]" );
+								productCount = 0;
 							}
+
+							json.append( " ]" );
 						}
 					}
-
-					json.append( " } }" );
-
-					allJson.append( json );
 				}
+
+				json.append( " } }" );
+
+				allJson.append( json );
 			}
 
 			allJson.append( " ] }" );

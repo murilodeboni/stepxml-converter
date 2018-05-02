@@ -169,3 +169,5 @@ Assets All
     ]
 }
 ```
+
+The project uses *Swagger* for API documentation, so to access the documentation just start the project and access the address: http://<server-address>:9090/swagger-ui.html
